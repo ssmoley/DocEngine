@@ -33,11 +33,28 @@ def getDocQuery(docString):
 		result = sqlData('%s' % sqlQuery)
 		a_dict.update(result.pop())
 	return a_dict
-	
+
+def formatGet(m):
+	contents = m.group(1)
+	print m.group(1)
+	try:
+		c2 = m.group(2)
+	except:
+		c2 = None
+	try:
+		c3 = m.group(3)
+	except:
+		c3 = None
+	print contents
+	if c2 != None:
+		print c2 
+	if c3 != None:
+		print c3
+	return '{}'.format(docResults[contents]) 
 
 def fillGets(xml, dictionary):
-	xml = re.sub('\[get\((.*?)\)\]', lambda m: '{}'.format(dictionary[m.group(1)]) ,xml)
-	xml = re.sub('\[MERGEFIELD (.*?)\]', lambda m: '{}'.format(dictionary[m.group(1)]) ,xml)
+	xml = re.sub('\[get\((.*?)\)\]', formatGet ,xml)
+	xml = re.sub('\[MERGEFIELD (.*?)(\s"(.*)")?\]', formatGet ,xml)
 	print xml
 
 	
