@@ -1,3 +1,4 @@
+import datetime
 import re
 import pymssql
 
@@ -43,13 +44,14 @@ def formatGet(m):
     except:
         c3 = None
     if c3 != None:
-       pass #print c3
+        pass #print c3
 
-    if type(docResults[contents]) == datetime:
-        pass    
-
-
-    return '{}'.format(docResults[contents]) 
+    if type(docResults[contents]) == type(datetime.datetime.now()) and c3 != None:
+        result = docResults[contents]
+        c3 = dateFormat(c3)
+        return result.strftime(c3)
+    else:
+        return '{}'.format(docResults[contents]) 
 
 def fillGets(xml, dictionary):
     xml = re.sub('\[get\((.*?)\)\]', formatGet ,xml)
@@ -59,7 +61,7 @@ def fillGets(xml, dictionary):
     
 def dateFormat(format):
     dateFormatTable = [
-                       ('YYYY' , '%Y'  ),
+                       ('YYYY' , '%Y' ),
                        ('YY' , '%y' ),
                        ('WW' , '%A' ),
                        ('W' , '%a' ),
@@ -79,10 +81,10 @@ def dateFormat(format):
             format = str.replace(format, i[0], i[1])
         return format
 
-import datetime
-now = datetime.datetime.now()
-dateformat = dateFormat('MM-DD-YYYY WW, MMMM DD, YYYY')
-print now.strftime('%s' % dateformat)
+# import datetime
+# now = datetime.datetime.now()
+# dateformat = dateFormat('MM-DD-YY WW, MMMM DD, YYYY')
+# print now.strftime('%s' % dateformat)
 
 
 xml = getDoc(askvalue['docid']) 
@@ -90,9 +92,7 @@ docResults  = getDocQuery(xml)
 xml = removeQuery(xml)
 xml = fillGets(xml, docResults)
 
-# print xml
-
-
+print xml
 
 
 
