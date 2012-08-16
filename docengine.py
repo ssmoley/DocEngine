@@ -46,7 +46,7 @@ def formatGet(m):
     if c3 != None:
         pass #print c3
 
-    if type(docResults[contents]) == type(datetime.datetime.now()) and c3 != None:
+    if type(docResults[contents]) == type(datetime.datetime.now()):
         result = docResults[contents]
         c3 = dateFormat(c3)
         return result.strftime(c3)
@@ -72,7 +72,8 @@ def dateFormat(format):
                        ('HH:MM' , '%x' ),
                        ('HH' , '%I' ),
                        ('DD' , '%d' ),
-                       ('D', '%d' ) ]
+                       ('D', '%d' ) 
+                      ]
     
     if format == None:
         return '%x'
