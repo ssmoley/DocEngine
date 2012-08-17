@@ -2,6 +2,9 @@ import datetime
 import re
 import pymssql
 
+askvalue = {'docid': 7,
+            'ORDER_NUMBER': '10250'}
+listNumCount = []
 askvalue = {'docid':7,
             'ORDER_NUMBER':'10250' }
 
