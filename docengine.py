@@ -61,12 +61,12 @@ def formatGet(m):
     if c3 != None:
         pass  # print c3
     try:
-        if type(docResults[contents]) == type(datetime.datetime.now()):
-            result = docResults[contents]
+        if type(dictionary[contents]) == type(datetime.datetime.now()):
+            result = dictionary[contents]
             c3 = dateFormat(c3)
             return result.strftime(c3)
         else:
-            return '{}'.format(docResults[contents])
+            return '{}'.format(dictionary[contents])
     except:
         return '***ERROR RETRIEVING %s***' % contents
 
@@ -87,7 +87,7 @@ def dateFormat(format):
 
         DMS date formatting is commented below
 
-        Todo: AM/PM Modifiers
+        Todo: AM/PM Modifiers, Minutes
     '''
     dateFormatTable = [
                        ('YYYY', '%Y'),   # 2012 - 4 Digit Year
@@ -136,7 +136,9 @@ def fillMergeLoop(xml):
     text = ''
 
     # \[MERGELOOP "(.*)"](.*)\[ENDMERGE\]
-    regexMatch = re.search('\[MERGELOOP "(.*)"](.*)\[ENDMERGE\]', xml, re.DOTALL)
+    regexMatch = re.search('\[MERGELOOP "(.*)"](.*)\[ENDMERGE\]',
+                           xml,
+                           re.DOTALL)
     loopQuery = fillGets(regexMatch.group(1), docResults)
     loopData = sqlData(loopQuery)
     loopText = regexMatch.group(2)
