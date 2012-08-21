@@ -2,9 +2,10 @@ import datetime
 import re
 import pymssql
 
-askvalue = {'docid': 8,
+askvalue = {'docid': 10,
             'ORDER_NUMBER': '10250'}
 listNumCount = []
+activeDictonary = {}
 
 
 def sqlData(sql, dict=False):
@@ -51,6 +52,7 @@ def getDocQuery(docString):
 def formatGet(m):
     '''Determines what format to use for values based on variable type
     '''
+    global activeDictonary
     contents = m.group(1)
     #print m.group(1)
     #print type(docResults[contents])
@@ -61,12 +63,12 @@ def formatGet(m):
     if c3 != None:
         pass  # print c3
     try:
-        if type(dictionary[contents]) == type(datetime.datetime.now()):
-            result = dictionary[contents]
+        if type(activeDictonary[contents]) == type(datetime.datetime.now()):
+            result = activeDictonary[contents]
             c3 = dateFormat(c3)
             return result.strftime(c3)
         else:
-            return '{}'.format(dictionary[contents])
+            return '{}'.format(activeDictonary[contents])
     except:
         return '***ERROR RETRIEVING %s***' % contents
 
@@ -75,6 +77,8 @@ def fillGets(xml, dictionary):
     '''Finds all [get(VALUE)] and [MERGEFIELD VALUES] in xml and
        replaces them with the values found in the passed dictionary.
     '''
+    global activeDictonary
+    activeDictonary = dictionary
     xml = re.sub('\[get\((.*?)\)\]', formatGet, xml)
     xml = re.sub('\[MERGEFIELD (.*?)(?:\s"(.*)")?\]', formatGet, xml)
     #   \[[\s*]?MERGEFIELD[\s*]?(.*?)([\s*]?"(.*)?")?[\s*]?\]
@@ -131,34 +135,33 @@ def fillListNum(xml):
     return re.sub('\[LISTNUM (.*?)(\s"(.*)")?\]', formatListNum, xml)
 
 
-def fillMergeLoop(xml):
+def fillMergeLoops(xml):
     global docResults
     text = ''
-
-    # \[MERGELOOP "(.*)"](.*)\[ENDMERGE\]
-    regexMatch = re.search('\[MERGELOOP "(.*)"](.*)\[ENDMERGE\]',
+    regexMatch = re.finditer('\[MERGELOOP "(.*?)"(?:\s"(.*?)")?](.*?)\[ENDMERGE\]',
                            xml,
                            re.DOTALL)
-    loopQuery = fillGets(regexMatch.group(1), docResults)
-    loopData = sqlData(loopQuery)
-    loopText = regexMatch.group(2)
+    for item in regexMatch:
+        print item.group(1, 2, 3)
+    # for item in regexMatch:
+    #     loopQuery = fillGets(regexMatch.group(1), docResults)
+    #     loopData = sqlData(loopQuery)
+    #     loopText = regexMatch.group(2)
 
-    for item in loopData:
-        print loopText
-        print item['OrderDate']
-        print fillGets(loopText, item)
-        text = text + fillGets(loopText, item)
-        pass
-    print text
+    #     for item in loopData:
+    #         text = text + fillGets(loopText, item)
+
+    #     xml = re.sub(item, text, xml)
+    #     print text
+    # return xml
 
 
 xml = getDoc(askvalue['docid'])
 docResults = getDocQuery(xml)
 xml = removeQuery(xml)
-fillMergeLoop(xml)
+fillMergeLoops(xml)
 xml = fillGets(xml, docResults)
 xml = fillListNum(xml)
-
 
 
 # print xml
