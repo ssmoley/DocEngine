@@ -14,9 +14,7 @@ def sqlData(sql, dict=False):
                            password='sql', database='northwind',
                            as_dict='True')
     cur = conn.cursor()
-
     cur.execute('%s' % sql)
-
     return cur.fetchall()
 
 
@@ -142,18 +140,18 @@ def fillMergeLoops(xml):
                            xml,
                            re.DOTALL)
     for item in regexMatch:
+        text = ''
         print item.group(1, 2, 3)
-    # for item in regexMatch:
-    #     loopQuery = fillGets(regexMatch.group(1), docResults)
-    #     loopData = sqlData(loopQuery)
-    #     loopText = regexMatch.group(2)
+        loopQuery = fillGets(item.group(1), docResults)
+        loopData = sqlData(loopQuery)
+        loopText = item.group(2)
+        activeDictonary = loopData
+        for item in loopData:
+            text = text + fillGets(loopText, loopData)
 
-    #     for item in loopData:
-    #         text = text + fillGets(loopText, item)
-
-    #     xml = re.sub(item, text, xml)
-    #     print text
-    # return xml
+        xml = xml.replace(item.group(1), text)
+        print text
+    return xml
 
 
 xml = getDoc(askvalue['docid'])
@@ -164,7 +162,7 @@ xml = fillGets(xml, docResults)
 xml = fillListNum(xml)
 
 
-# print xml
+print xml
 
 
 
