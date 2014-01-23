@@ -2,7 +2,7 @@ import os
 import subprocess
 import glob
 
-files = glob.glob(r'c:\\users\\sean\\desktop\\python\\*.txt')
+files = glob.glob('c:\\users\\sean\\desktop\\python\\*.txt')
 complete = []
 s = ''
 i = 0
@@ -24,7 +24,6 @@ for item in files:
         break
     else:
         continue
-
 
 
 f = open('complete.txt', 'w+')
